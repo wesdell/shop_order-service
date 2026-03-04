@@ -1,5 +1,6 @@
 package com.wesdell.shop.order;
 
+import com.wesdell.shop.order.stubs.InventoryClientStub;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.hamcrest.MatcherAssert;
@@ -11,9 +12,11 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Import;
 import org.testcontainers.mysql.MySQLContainer;
+import org.wiremock.spring.EnableWireMock;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@EnableWireMock
 class OrderServiceApplicationTests {
 
     @ServiceConnection
@@ -41,6 +44,8 @@ class OrderServiceApplicationTests {
                     "price": 1001
                 }
                 """;
+
+        InventoryClientStub.callInventoryStub("iphone_16", 100);
 
         String orderResponse = RestAssured
                 .given()
