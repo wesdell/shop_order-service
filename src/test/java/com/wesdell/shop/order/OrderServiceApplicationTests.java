@@ -54,6 +54,7 @@ class OrderServiceApplicationTests {
                 .when()
                 .post("/api/orders")
                 .then()
+                .log().all()
                 .statusCode(201)
                 .extract().body().asString();
 
