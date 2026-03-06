@@ -11,12 +11,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.mysql.MySQLContainer;
 import org.wiremock.spring.EnableWireMock;
 
 @Import(TestcontainersConfiguration.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "inventory.url=http://localhost:${wiremock.server.port}"
+)
 @EnableWireMock
+@ActiveProfiles("test")
 class OrderServiceApplicationTests {
 
     @ServiceConnection
@@ -39,13 +44,13 @@ class OrderServiceApplicationTests {
 	void Given_AnOrder_When_UserWantsToSave_Then_OrderSavedOnDB() {
 		String orderRequestBody = """
                 {
-                    "skuCode": "iphone_16",
+                    "skuCode": "iphone15",
                     "quantity": 100,
                     "price": 1001
                 }
                 """;
 
-        InventoryClientStub.callInventoryStub("iphone_16", 100);
+        InventoryClientStub.callInventoryStub("iphone15", 100);
 
         String orderResponse = RestAssured
                 .given()
